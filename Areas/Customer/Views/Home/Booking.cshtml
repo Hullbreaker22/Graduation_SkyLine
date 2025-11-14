@@ -1,0 +1,333 @@
+﻿@{
+    // Sample flight data - replace with your model data
+    var route = "Cairo to San Francisco";
+    var departure = "1:20am - 12:40pm (21h 20m, 1 stop)";
+    var airline = "Qatar Airways";
+    var date = "Thu, Nov 13";
+    var fareType = "Business Elite";
+    var flightPrice = 4777.00m;
+    var taxes = 825.42m;
+    var totalPrice = 5602.42m;
+    var benefits = new[] {
+        "Seat choice included",
+        "Carry-on bag included (15 lbs)",
+        "2 checked bags included (70 lbs each)",
+        "Refundable",
+        "Changes included, only pay fare difference"
+    };
+}
+
+<style>
+    .review-page {
+        min-height: 100vh;
+        background-color: #f9fafb;
+        padding: 1.5rem 1rem;
+    }
+
+    .container-custom {
+        max-width: 1280px;
+        margin: 0 auto;
+    }
+
+    .breadcrumb {
+        margin-bottom: 1.5rem;
+        font-size: 0.875rem;
+        color: #6b7280;
+    }
+
+    .grid-layout {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    @@media (min-width: 1024px) {
+        .grid-layout {
+            grid-template-columns: 2fr 1fr;
+        }
+    }
+
+    .card {
+        background: white;
+        border-radius: 0.5rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .alert-banner {
+        background-color: #1f2937;
+        color: white;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        display: flex;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .alert-icon {
+        flex-shrink: 0;
+        width: 1.25rem;
+        height: 1.25rem;
+        margin-top: 0.125rem;
+    }
+
+    .benefit-item {
+        display: flex;
+        gap: 0.75rem;
+        margin-bottom: 0.75rem;
+        align-items: start;
+    }
+
+    .check-icon {
+        background-color: #10b981;
+        border-radius: 50%;
+        padding: 0.25rem;
+        width: 1.25rem;
+        height: 1.25rem;
+        flex-shrink: 0;
+        margin-top: 0.125rem;
+    }
+
+    .check-mark {
+        color: white;
+        font-size: 0.75rem;
+        font-weight: bold;
+    }
+
+    .btn-primary {
+        width: 100%;
+        background-color: #2563eb;
+        color: white;
+        font-weight: 600;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+        .btn-primary:hover {
+            background-color: #1d4ed8;
+        }
+
+    .btn-outline {
+        border: 2px solid #2563eb;
+        color: #2563eb;
+        background: white;
+        font-weight: 500;
+        padding: 0.5rem 1.5rem;
+        border-radius: 9999px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+        .btn-outline:hover {
+            background-color: #eff6ff;
+        }
+
+    .link-blue {
+        color: #2563eb;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.875rem;
+    }
+
+        .link-blue:hover {
+            color: #1d4ed8;
+        }
+
+    .price-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+    }
+
+    .badge-warning {
+        background-color: #dc2626;
+        color: white;
+        font-size: 0.875rem;
+        font-weight: 600;
+        padding: 0.25rem 0.75rem;
+        border-radius: 0.25rem;
+        display: inline-block;
+        margin-bottom: 1.5rem;
+    }
+
+    .badge-co2 {
+        background-color: #f3f4f6;
+        font-size: 0.75rem;
+        padding: 0.25rem 0.75rem;
+        border-radius: 0.25rem;
+        display: inline-block;
+        margin-bottom: 1rem;
+    }
+
+    .flight-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 1rem;
+        border-top: 1px solid #e5e7eb;
+        margin-top: 1rem;
+    }
+
+    .price-summary-header {
+        font-size: 1.25rem;
+        font-weight: bold;
+        color: #111827;
+        margin-bottom: 1.5rem;
+    }
+
+    .trip-total {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 1rem;
+        border-top: 1px solid #e5e7eb;
+        margin-bottom: 0.5rem;
+    }
+
+    .cancellation-box {
+        border-top: 1px solid #e5e7eb;
+        padding-top: 1.5rem;
+        margin-top: 1.5rem;
+        display: flex;
+        gap: 0.75rem;
+    }
+
+    .icon-box {
+        background-color: #dbeafe;
+        border-radius: 50%;
+        padding: 0.5rem;
+        width: fit-content;
+        height: fit-content;
+    }
+
+    .sticky-sidebar {
+        position: sticky;
+        top: 1.5rem;
+    }
+</style>
+
+<div class="review-page">
+    <div class="container-custom">
+        <!-- Breadcrumb -->
+        <div class="breadcrumb">
+            @airline · CAI → SFO <span style="margin: 0 0.5rem;">›</span> Review your trip
+        </div>
+
+        <div class="grid-layout">
+            <!-- Main Content -->
+            <div>
+                <!-- Alert Banner -->
+                <div class="alert-banner">
+                    <svg class="alert-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                    <div>
+                        <h3 style="font-weight: 600; margin-bottom: 0.25rem;">Flight has mixed fare types</h3>
+                        <p style="font-size: 0.875rem; color: #d1d5db;">Your in-flight experience may differ from one flight to the next.</p>
+                    </div>
+                </div>
+
+                <!-- Flight Details Card -->
+                <div class="card">
+                    <h2 style="font-size: 1.5rem; font-weight: bold; color: #111827; margin-bottom: 1rem;">@route</h2>
+                    <p style="color: #374151; margin-bottom: 0.5rem;">@departure</p>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+                        <svg width="16" height="16" fill="none" stroke="#4b5563" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                        </svg>
+                        <span style="color: #374151;">@airline · @date</span>
+                    </div>
+                    <span class="badge-co2">Above average CO₂</span>
+                    <div class="flight-header">
+                        <a href="#" class="link-blue">Flight details</a>
+                        <a href="#" class="link-blue">Change flight</a>
+                    </div>
+                </div>
+
+                <!-- Fare Details Card -->
+                <div class="card">
+                    <h3 style="font-size: 1.25rem; font-weight: bold; color: #111827; margin-bottom: 1rem;">Your fare: @fareType</h3>
+                    @foreach (var benefit in benefits)
+                    {
+                        <div class="benefit-item">
+                            <div class="check-icon">
+                                <span class="check-mark">✓</span>
+                            </div>
+                            <span style="color: #374151;">@benefit</span>
+                        </div>
+                    }
+                </div>
+
+                <!-- Seats Card -->
+                <div class="card">
+                    <h3 style="font-size: 1.25rem; font-weight: bold; color: #111827; margin-bottom: 1rem;">Seats</h3>
+                    <div class="benefit-item" style="margin-bottom: 1rem;">
+                        <div class="check-icon">
+                            <span class="check-mark">✓</span>
+                        </div>
+                        <span style="color: #374151;">Seat choice included</span>
+                    </div>
+                    <button class="btn-outline">Choose your seats</button>
+                </div>
+            </div>
+
+            <!-- Price Summary Sidebar -->
+            <div>
+                <div class="card sticky-sidebar">
+                    <h3 class="price-summary-header">Price summary</h3>
+
+                    <div class="price-row">
+                        <span style="color: #374151;">Traveler 1: Adult</span>
+                        <span style="font-weight: 600; color: #111827;">$@totalPrice.ToString("N2")</span>
+                    </div>
+
+                    <div class="price-row">
+                        <span style="color: #374151;">Flight</span>
+                        <span style="color: #111827;">$@flightPrice.ToString("N2")</span>
+                    </div>
+
+                    <div class="price-row">
+                        <div style="display: flex; align-items: center; gap: 0.25rem;">
+                            <span style="color: #374151;">Taxes, fees, and charges</span>
+                            <svg width="16" height="16" fill="none" stroke="#9ca3af" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <span style="color: #111827;">$@taxes.ToString("N2")</span>
+                    </div>
+
+                    <span class="badge-warning">2 left at</span>
+
+                    <div class="trip-total">
+                        <span style="font-size: 1.25rem; font-weight: bold; color: #111827;">Trip total</span>
+                        <span style="font-size: 1.5rem; font-weight: bold; color: #111827;">$@totalPrice.ToString("N2")</span>
+                    </div>
+                    <p style="font-size: 0.75rem; color: #6b7280; margin-bottom: 1.5rem;">Rates are quoted in US dollars</p>
+
+                    <button class="btn-primary">Check out</button>
+
+                    <p style="font-size: 0.75rem; color: #4b5563; margin-top: 1rem; margin-bottom: 1.5rem;">
+                        Your selected fare is refundable to your original form of payment. Some taxes, fees, and charges may not be refunded.
+                    </p>
+
+                    <!-- Cancellation Policy -->
+                    <div class="cancellation-box">
+                        <div class="icon-box">
+                            <svg width="20" height="20" fill="none" stroke="#2563eb" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 style="font-weight: 600; color: #111827; margin-bottom: 0.25rem;">Free cancellation</h4>
+                            <p style="font-size: 0.875rem; color: #4b5563;">There's no fee to cancel within 24 hours of booking.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
